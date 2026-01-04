@@ -9,7 +9,7 @@ export const api = axios.create({
   },
 });
 
-export const setAuthToken = (token: string) => {
+export const setAuthToken = (token: string | null) => {
   if (token) {
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     localStorage.setItem("token", token);
@@ -17,4 +17,33 @@ export const setAuthToken = (token: string) => {
     delete api.defaults.headers.common["Authorization"];
     localStorage.removeItem("token");
   }
+};
+
+const savedToken = localStorage.getItem("token");
+if (savedToken) {
+  setAuthToken(savedToken);
+}
+
+export interface Todo {
+  id: number;
+  title: string;
+  is_completed: boolean;
+}
+
+export const todoApi = {
+  getAll: async () => {
+    const res = await api.get<Todo[]>("/todos");
+    return res.data;
+  },
+  create: async (title: string) => {
+    const res = await api.post<Todo>("/todos", { title });
+    return res.data;
+  },
+  toggle: async (id: number) => {
+    const res = await api.put<Todo>(`/todos/${id}`);
+    return res.data;
+  },
+  delete: async (id: number) => {
+    await api.delete(`/todos/${id}`);
+  },
 };
