@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AxiosError } from "axios";
-import { api, setAuthToken } from "../src/services/api";
+import { api } from "../src/services/api";
 import { AuthLayout } from "../components/layout/AuthLayout";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
@@ -10,9 +10,12 @@ interface AuthErrorResponse {
   message: string;
 }
 
-export function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export function RegisterPage() {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -23,15 +26,14 @@ export function LoginPage() {
     setError("");
 
     try {
-      const response = await api.post("/auth/login", { email, password });
+      await api.post("/auth/register", formData);
 
-      setAuthToken(response.data.token);
-
-      navigate("/dashboard");
+      alert("Account created! Please log in.");
+      navigate("/login");
     } catch (err) {
       const error = err as AxiosError<AuthErrorResponse>;
 
-      console.error("Login Failed", error);
+      console.error("Registration Failed", error);
 
       if (
         error.response &&
@@ -40,7 +42,7 @@ export function LoginPage() {
       ) {
         setError(error.response.data.message);
       } else {
-        setError("Login failed. Please check your network.");
+        setError("Registration failed. Please try again.");
       }
     } finally {
       setIsLoading(false);
@@ -49,8 +51,8 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      title="Welcome back"
-      subtitle="Enter your credentials to access your tasks"
+      title="Create an account"
+      subtitle="Join us to manage your tasks efficiently"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
@@ -60,34 +62,43 @@ export function LoginPage() {
         )}
 
         <Input
+          label="Username"
+          value={formData.username}
+          onChange={(e) =>
+            setFormData({ ...formData, username: e.target.value })
+          }
+          required
+        />
+
+        <Input
           label="Email Address"
           type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
         />
 
         <Input
           label="Password"
           type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
           required
         />
 
         <Button type="submit" className="w-full" isLoading={isLoading}>
-          Sign In
+          Create Account
         </Button>
 
         <p className="text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Link
-            to="/register"
+            to="/login"
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
-            Create one
+            Sign in
           </Link>
         </p>
       </form>

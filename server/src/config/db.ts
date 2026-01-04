@@ -10,12 +10,3 @@ export const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: parseInt(process.env.DB_PORT || '5432'),
 });
-
-pool.on('connect', () => {
-  console.log('✅ Database connected successfully');
-});
-
-pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client', err);
-  process.exit(-1);
-});

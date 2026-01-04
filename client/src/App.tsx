@@ -1,9 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "../pages/LoginPage";
-
-function RegisterPageStub() {
-  return <div className="p-10 text-center">Register Page Coming Soon</div>;
-}
+import { RegisterPage } from "../pages/RegisterPage";
+import { DashboardPage } from "../pages/DashboardPage";
 
 function App() {
   return (
@@ -12,7 +10,8 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
 
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPageStub />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </BrowserRouter>
   );
